@@ -1,0 +1,1734 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="theme-color" content="#FF5A36" />
+  <title>YAARI – अपना देसी सोशल मीडिया</title>
+  <style>
+    :root {
+      --p1: #FF5A36;
+      --p2: #E11D48;
+      --p3: #7C3AED;
+      --grad: linear-gradient(135deg, #FF5A36, #E11D48, #7C3AED);
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, 'Noto Sans Devanagari', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 72px;
+    }
+    button, input, textarea { font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    .hidden { display: none !important; }
+    .container { max-width: 560px; margin: 0 auto; padding: 12px; }
+    .header {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 560px; margin: 0 auto; height: 56px; padding: 0 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: inline-flex; align-items: center; gap: 8px; }
+    .logo-badge {
+      width: 32px; height: 32px; border-radius: 10px; background: var(--grad);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 900;
+      box-shadow: 0 4px 10px rgba(225, 29, 72, 0.25);
+    }
+    .logo-text {
+      font-size: 20px; font-weight: 900; letter-spacing: -0.5px;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; overflow: hidden; margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .card-pad { padding: 16px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 15px; border-radius: 14px; font-size: 13px; font-weight: 700;
+      transition: opacity 0.15s;
+    }
+    .btn:active { opacity: 0.85; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--grad); color: #fff; width: 100%; }
+    .btn-soft { background: #f1f5f9; color: #1e293b; }
+    .btn-danger { background: #fef2f2; color: #dc2626; }
+    .btn-dark { background: #0f172a; color: #fff; }
+    .input {
+      width: 100%; padding: 11px 14px; border-radius: 14px;
+      border: 1px solid var(--border); font-size: 14px; outline: none; background: #fff;
+    }
+    .input:focus { border-color: var(--p1); }
+    .avatar { border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; background: #f1f5f9; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .between { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+      background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+    }
+    .bottom-nav-inner {
+      max-width: 560px; margin: 0 auto; height: 62px;
+      display: grid; grid-template-columns: repeat(5, 1fr);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; font-size: 11px; font-weight: 700; color: var(--muted);
+    }
+    .nav-item.active { color: var(--p1); }
+    .stories-row {
+      display: flex; gap: 12px; overflow-x: auto; padding: 12px 14px; scrollbar-width: none;
+    }
+    .stories-row::-webkit-scrollbar { display: none; }
+    .story-item { width: 66px; flex-shrink: 0; text-align: center; }
+    .story-ring {
+      width: 64px; height: 64px; border-radius: 50%; padding: 2.5px;
+      background: var(--grad); position: relative; margin: 0 auto 4px;
+    }
+    .story-ring.seen { background: #cbd5e1; }
+    .story-ring.empty { background: none; border: 2px dashed #cbd5e1; }
+    .story-ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
+    .story-plus {
+      position: absolute; bottom: -2px; right: -2px; width: 22px; height: 22px;
+      border-radius: 50%; background: var(--p1); color: #fff; border: 2px solid #fff;
+      font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    }
+    .post-media { width: 100%; max-height: 460px; background: #000; display: block; object-fit: cover; }
+    .music-sticker {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      background: linear-gradient(90deg, #fff7ed, #fdf2f8, #f5f3ff);
+      border: 1px solid #fed7aa; border-radius: 14px; padding: 8px 12px; margin: 8px 14px 0;
+      font-size: 12px;
+    }
+    .music-pill-dark {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(15, 23, 42, 0.78); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.25); color: #fff;
+      padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700;
+    }
+    .mixer-box {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 16px;
+      padding: 12px; margin-top: 10px;
+    }
+    .slider { width: 100%; accent-color: var(--p1); cursor: pointer; }
+    .song-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 8px 10px; border-radius: 12px; border: 1px solid #f1f5f9; margin-bottom: 6px;
+      background: #fff;
+    }
+    .song-row.selected { border-color: var(--p1); background: #fff7ed; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 4px; }
+    .grid-cell { aspect-ratio: 1/1; background: #000; overflow: hidden; border-radius: 8px; position: relative; }
+    .grid-cell img, .grid-cell video { width: 100%; height: 100%; object-fit: cover; }
+    .tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px;
+      background: #fff; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 12px;
+    }
+    .tab-btn { padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 700; color: var(--muted); }
+    .tab-btn.active { background: var(--p1); color: #fff; }
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.72);
+      display: flex; align-items: center; justify-content: center; padding: 12px;
+    }
+    .modal-box {
+      background: #fff; width: 100%; max-width: 470px; border-radius: 24px;
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+    .reels-wrap {
+      position: fixed; inset: 0 0 62px 0; z-index: 25; background: #000;
+      overflow-y: scroll; scroll-snap-type: y mandatory;
+    }
+    .reel-slide {
+      height: 100%; width: 100%; scroll-snap-align: start; scroll-snap-stop: always;
+      position: relative; display: flex; align-items: center; justify-content: center; background: #000;
+    }
+    .reel-video { width: 100%; height: 100%; object-fit: contain; }
+    .reel-actions {
+      position: absolute; right: 12px; bottom: 24px; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; gap: 14px; color: #fff;
+    }
+    .reel-act-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      color: #fff; font-size: 11px; font-weight: 700; text-shadow: 0 1px 4px #000;
+    }
+    .reel-act-circle {
+      width: 44px; height: 44px; border-radius: 50%; background: rgba(0, 0, 0, 0.45);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .toast {
+      position: fixed; top: 68px; left: 50%; transform: translateX(-50%); z-index: 95;
+      background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 99px;
+      font-size: 12px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      max-width: 90vw; text-align: center;
+    }
+    .progress-bar { width: 100%; height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--grad); transition: width 0.15s; }
+    #yt-bg-wrap {
+      position: fixed; bottom: 0; left: 0; width: 1px; height: 1px;
+      opacity: 0.01; pointer-events: none; z-index: -1; overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+  <div id="yt-bg-wrap"><div id="yt-bg-player"></div></div>
+
+  <script>
+    const STORAGE_KEY = 'yaari_yt_local_v2';
+    const IDB_NAME = 'yaari_yt_media_v2';
+    const blobUrlCache = {};
+
+    // ---------- ट्रेंडिंग YouTube गानों की सूची ----------
+    const TRENDING_SONGS = [
+      { videoId: 'BddP6PYo2gs', title: 'केसरिया (Kesariya)', artist: 'अरिजीत सिंह • ब्रह्मास्त्र' },
+      { videoId: 'ElZfdU54Cp8', title: 'अपना बना ले (Apna Bana Le)', artist: 'अरिजीत सिंह • भेड़िया' },
+      { videoId: 'XIDPdc38jg8', title: 'देवा देवा (Deva Deva)', artist: 'अरिजीत सिंह • प्रीतम' },
+      { videoId: 'M4zPqoAfpK4', title: 'रसिया रिप्राइज़ (Rasiya)', artist: 'प्रीतम • तुषार जोशी' },
+      { videoId: 'jfKfPfyJRdk', title: 'लोफ़ी चिल बीट्स (Lofi Chill)', artist: 'रिलैक्स वाइब्स' },
+      { videoId: 'K4DyBUG242c', title: 'ऑन एंड ऑन (On & On)', artist: 'कार्टून • NCS बीट्स' },
+      { videoId: 'yJg-Y5byMMw', title: 'मॉर्टल्स (Mortals)', artist: 'वारियो • NCS एनर्जी' },
+      { videoId: 'QnL5P0tFkwM', title: 'जंगल वाइब्स (Jungle)', artist: 'रॉजर्स एंड डीन • NCS' }
+    ];
+
+    // ---------- YouTube IFrame Player API नियंत्रक ----------
+    let ytPlayer = null;
+    let ytReady = false;
+    let pendingYT = null;
+    let activePlayingKey = null;
+
+    function initYouTubeAPI() {
+      if (window.YT && window.YT.Player) {
+        onYouTubeIframeAPIReady();
+        return;
+      }
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      tag.async = true;
+      document.head.appendChild(tag);
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+      try {
+        ytPlayer = new YT.Player('yt-bg-player', {
+          width: '1',
+          height: '1',
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            playsinline: 1,
+            enablejsapi: 1,
+            rel: 0,
+            modestbranding: 1
+          },
+          events: {
+            onReady: function () {
+              ytReady = true;
+              if (pendingYT) {
+                const p = pendingYT;
+                pendingYT = null;
+                playYTTrack(p.videoId, p.volume, p.key);
+              }
+            },
+            onStateChange: function (ev) {
+              if (ev.data === YT.PlayerState.ENDED && activePlayingKey) {
+                try { ytPlayer.seekTo(0); ytPlayer.playVideo(); } catch {}
+              }
+            },
+            onError: function () {
+              showToast('यह YouTube गाना एम्बेड के लिए उपलब्ध नहीं है या इंटरनेट बंद है। कोई अन्य गाना चुनें।');
+              activePlayingKey = null;
+              updateMusicStickerIcons();
+            }
+          }
+        });
+      } catch {}
+    };
+
+    function parseYouTubeId(input) {
+      const s = (input || '').trim();
+      if (!s) return null;
+      if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return s;
+      const m = s.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([a-zA-Z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+
+    function playYTTrack(videoId, volumePct = 70, key = null) {
+      if (!videoId) return;
+      activePlayingKey = key;
+      const vol = Math.max(0, Math.min(100, Number(volumePct)));
+      if (!ytReady || !ytPlayer) {
+        pendingYT = { videoId, volume: vol, key };
+        updateMusicStickerIcons();
+        return;
+      }
+      try {
+        ytPlayer.loadVideoById({ videoId });
+        ytPlayer.unMute();
+        ytPlayer.setVolume(vol);
+        ytPlayer.playVideo();
+      } catch {}
+      updateMusicStickerIcons();
+    }
+
+    function setYTVolume(volumePct) {
+      const vol = Math.max(0, Math.min(100, Number(volumePct)));
+      if (ytReady && ytPlayer) {
+        try {
+          if (vol === 0) ytPlayer.mute();
+          else { ytPlayer.unMute(); ytPlayer.setVolume(vol); }
+        } catch {}
+      }
+    }
+
+    function stopYTTrack() {
+      pendingYT = null;
+      activePlayingKey = null;
+      if (ytReady && ytPlayer) {
+        try { ytPlayer.stopVideo(); } catch {}
+      }
+      updateMusicStickerIcons();
+    }
+
+    function updateMusicStickerIcons() {
+      document.querySelectorAll('[data-music-key]').forEach(el => {
+        const k = el.getAttribute('data-music-key');
+        el.textContent = (k && k === activePlayingKey) ? '⏸️ रोकें' : '▶️ सुनें';
+      });
+    }
+
+    function togglePostMusic(postId) {
+      const p = DB.posts.find(x => x.id === postId);
+      if (!p || !p.music) return;
+      const key = 'post_' + postId;
+      const vid = document.getElementById('post-vid-' + postId);
+      if (activePlayingKey === key) {
+        stopYTTrack();
+        if (vid) vid.pause();
+      } else {
+        if (vid) {
+          const ov = p.originalVolume ?? 80;
+          vid.volume = ov / 100;
+          vid.muted = ov === 0;
+          vid.play().catch(() => {});
+        }
+        playYTTrack(p.music.videoId, p.musicVolume ?? 70, key);
+      }
+    }
+
+    // ---------- सामान्य हेल्पर्स ----------
+    function esc(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function makeAvatar(name, color = '#FF5A36') {
+      const ch = esc((name || 'य').trim().charAt(0).toUpperCase());
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" rx="60" fill="${color}"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="52" font-family="sans-serif" font-weight="bold">${ch}</text></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function makeSampleArt(title, bg1, bg2) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="540"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient></defs><rect width="720" height="540" fill="url(#g)"/><circle cx="580" cy="120" r="90" fill="rgba(255,255,255,0.16)"/><circle cx="140" cy="430" r="120" fill="rgba(255,255,255,0.12)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="36" font-family="sans-serif" font-weight="bold">${esc(title)}</text></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function timeAgo(ts) {
+      if (!ts) return 'अभी-अभी';
+      const s = Math.floor((Date.now() - ts) / 1000);
+      if (s < 60) return 'अभी-अभी';
+      const m = Math.floor(s / 60);
+      if (m < 60) return `${m} मिनट पहले`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h} घंटे पहले`;
+      return `${Math.floor(h / 24)} दिन पहले`;
+    }
+
+    function showToast(msg) {
+      const root = document.getElementById('toast-root');
+      root.innerHTML = `<div class="toast">${esc(msg)}</div>`;
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => { root.innerHTML = ''; }, 2600);
+    }
+
+    // ---------- ऑफलाइन मीडिया (IndexedDB + Image Compressor) ----------
+    function openMediaDB() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject();
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('files');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject();
+      });
+    }
+
+    async function saveMediaBlob(key, blob) {
+      try {
+        const db = await openMediaDB();
+        await new Promise((res, rej) => {
+          const tx = db.transaction('files', 'readwrite');
+          tx.objectStore('files').put(blob, key);
+          tx.oncomplete = res;
+          tx.onerror = rej;
+        });
+        blobUrlCache[key] = URL.createObjectURL(blob);
+        return key;
+      } catch {
+        blobUrlCache[key] = URL.createObjectURL(blob);
+        return key;
+      }
+    }
+
+    async function hydrateAllVideos() {
+      try {
+        const db = await openMediaDB();
+        const tx = db.transaction('files', 'readonly');
+        const store = tx.objectStore('files');
+        const keysReq = store.getAllKeys();
+        keysReq.onsuccess = () => {
+          const keys = keysReq.result || [];
+          let timer = null;
+          keys.forEach((k) => {
+            if (!blobUrlCache[k]) {
+              const g = store.get(k);
+              g.onsuccess = () => {
+                if (g.result) {
+                  blobUrlCache[k] = URL.createObjectURL(g.result);
+                  clearTimeout(timer);
+                  timer = setTimeout(render, 80);
+                }
+              };
+            }
+          });
+        };
+      } catch {}
+    }
+
+    function resolveMediaSrc(url) {
+      if (!url) return '';
+      if (url.startsWith('idb:')) return blobUrlCache[url] || '';
+      return url;
+    }
+
+    function compressImage(file, maxW = 900) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const scale = Math.min(1, maxW / img.width);
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.78));
+          };
+          img.onerror = reject;
+          img.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ---------- localStorage डेटाबेस ----------
+    function createInitialDB() {
+      const now = Date.now();
+      return {
+        currentUserId: 'u_aarav',
+        users: [
+          {
+            uid: 'u_aarav', name: 'आरव शर्मा', username: 'aarav_sharma',
+            email: 'aarav@yaari.in', phone: '9876543210', password: '123456',
+            bio: 'यात्रा, संगीत और YAARI पर दोस्तों के साथ यादें ✨',
+            photoURL: '', isPrivate: false,
+            followers: ['u_priya'], following: ['u_priya'], followRequests: [], savedPosts: []
+          },
+          {
+            uid: 'u_priya', name: 'प्रिया वर्मा', username: 'priya_verma',
+            email: 'priya@yaari.in', phone: '9811223344', password: '123456',
+            bio: 'YouTube लोफ़ी बीट्स और शाम की चाय ☕🎵',
+            photoURL: '', isPrivate: false,
+            followers: ['u_aarav'], following: ['u_aarav'], followRequests: [], savedPosts: []
+          }
+        ],
+        posts: [
+          {
+            id: 'p_1', authorId: 'u_priya',
+            mediaUrl: makeSampleArt('शाम की चाय और संगीत ☕', '#FF5A36', '#E11D48'),
+            mediaType: 'image',
+            caption: 'इस पोस्ट में YouTube म्यूजिक जुड़ा है — ऊपर "सुनें" बटन दबाकर सुनें!',
+            music: { videoId: 'BddP6PYo2gs', title: 'केसरिया (Kesariya)', artist: 'अरिजीत सिंह' },
+            originalVolume: 70, musicVolume: 75,
+            likes: ['u_aarav'],
+            comments: [{ id: 'c_1', authorId: 'u_aarav', text: 'गाना और तस्वीर दोनों लाजवाब हैं!', createdAt: now - 1500000 }],
+            createdAt: now - 3600000
+          },
+          {
+            id: 'p_2', authorId: 'u_aarav',
+            mediaUrl: makeSampleArt('पहाड़ों का सुकून 🏔️', '#7C3AED', '#2563EB'),
+            mediaType: 'image',
+            caption: 'दोस्तों के साथ यादगार सफ़र! #YAARI',
+            music: { videoId: 'ElZfdU54Cp8', title: 'अपना बना ले (Apna Bana Le)', artist: 'अरिजीत सिंह' },
+            originalVolume: 80, musicVolume: 65,
+            likes: ['u_priya'],
+            comments: [],
+            createdAt: now - 7200000
+          }
+        ],
+        stories: [
+          {
+            id: 's_1', authorId: 'u_priya',
+            mediaUrl: makeSampleArt('आज का संगीत मूड 🎧', '#E11D48', '#7C3AED'),
+            mediaType: 'image',
+            caption: 'मुस्कुराइए, आप YAARI स्टोरी देख रहे हैं!',
+            music: { videoId: 'jfKfPfyJRdk', title: 'लोफ़ी चिल बीट्स', artist: 'रिलैक्स वाइब्स' },
+            originalVolume: 60, musicVolume: 80,
+            views: [], reactions: [],
+            createdAt: now - 1200000, expiresAt: now + 23 * 3600 * 1000
+          }
+        ],
+        reels: [
+          {
+            id: 'r_1', authorId: 'u_aarav',
+            mediaUrl: makeSampleArt('YAARI म्यूजिक रील्स 🎬', '#FF5A36', '#7C3AED'),
+            isDemoArt: true,
+            caption: 'ऊपर "+ रील बनाएँ" से अपना वीडियो अपलोड करें और YouTube गाना मिक्स करें!',
+            music: { videoId: 'K4DyBUG242c', title: 'ऑन एंड ऑन (On & On)', artist: 'कार्टून • NCS' },
+            originalVolume: 60, musicVolume: 85,
+            likes: ['u_priya'],
+            comments: [{ id: 'rc_1', authorId: 'u_priya', text: 'ज़बरदस्त वाइब्स!', createdAt: now - 500000 }],
+            createdAt: now - 1800000
+          }
+        ]
+      };
+    }
+
+    function loadDB() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          const fresh = createInitialDB();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+          return fresh;
+        }
+        return JSON.parse(raw);
+      } catch {
+        return createInitialDB();
+      }
+    }
+
+    let DB = loadDB();
+    function saveDB() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+      } catch {
+        showToast('स्टोरेज भर गया है, कृपया कुछ पुरानी पोस्ट हटाएँ।');
+      }
+    }
+
+    const UI = {
+      screen: 'home',
+      authMode: 'login',
+      profileUid: null,
+      profileTab: 'posts',
+      searchTab: 'explore',
+      searchQuery: '',
+      reelsMuted: false
+    };
+
+    // अपलोड व वॉइस मिक्सर स्टेट
+    let uploadDraft = {
+      kind: 'post',
+      file: null,
+      previewUrl: '',
+      isVideo: false,
+      music: null,
+      songSearch: '',
+      originalVolume: 80,
+      musicVolume: 75
+    };
+
+    const me = () => DB.users.find(u => u.uid === DB.currentUserId) || null;
+    const getUser = (uid) => DB.users.find(u => u.uid === uid) || null;
+    const uPhoto = (u) => u?.photoURL || makeAvatar(u?.name || 'Y', u?.uid === 'u_priya' ? '#E11D48' : '#FF5A36');
+
+    function canViewAuthor(author) {
+      const cur = me();
+      if (!author || !cur) return false;
+      if (author.uid === cur.uid || !author.isPrivate) return true;
+      return author.followers.includes(cur.uid);
+    }
+
+    function getActiveStories() {
+      const now = Date.now();
+      const valid = DB.stories.filter(s => s.expiresAt > now);
+      if (valid.length !== DB.stories.length) {
+        DB.stories = valid;
+        saveDB();
+      }
+      return valid.filter(s => canViewAuthor(getUser(s.authorId)));
+    }
+
+    // ---------- लॉगिन / साइनअप ----------
+    function setAuthMode(m) { UI.authMode = m; render(); }
+
+    function quickLogin(email) {
+      const u = DB.users.find(x => x.email === email);
+      if (!u) return;
+      DB.currentUserId = u.uid;
+      saveDB();
+      UI.screen = 'home';
+      render();
+      showToast(`नमस्ते ${u.name}!`);
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const f = e.target;
+      if (UI.authMode === 'login') {
+        const idIn = f.identifier.value.trim().toLowerCase();
+        const pass = f.password.value;
+        const user = DB.users.find(u =>
+          (u.email.toLowerCase() === idIn || u.phone === idIn || u.username === idIn) && u.password === pass
+        );
+        if (!user) return showToast('ईमेल/मोबाइल या पासवर्ड गलत है।');
+        DB.currentUserId = user.uid;
+        saveDB();
+        UI.screen = 'home';
+        render();
+      } else if (UI.authMode === 'signup') {
+        const name = f.name.value.trim();
+        const username = f.username.value.trim().toLowerCase().replace(/[^a-z0-9._]/g, '');
+        const email = f.email.value.trim().toLowerCase();
+        const phone = f.phone.value.trim();
+        const password = f.password.value;
+        if (username.length < 3) return showToast('यूज़रनेम कम से कम 3 अक्षरों का रखें।');
+        if (DB.users.some(u => u.username === username)) return showToast('यह यूज़रनेम पहले से लिया जा चुका है।');
+        if (DB.users.some(u => u.email === email)) return showToast('यह ईमेल पहले से पंजीकृत है।');
+        const newU = {
+          uid: 'u_' + Date.now(), name, username, email, phone, password,
+          bio: 'नमस्ते! मैं YAARI पर नया हूँ।', photoURL: '', isPrivate: false,
+          followers: [], following: [], followRequests: [], savedPosts: []
+        };
+        DB.users.push(newU);
+        DB.currentUserId = newU.uid;
+        saveDB();
+        UI.screen = 'home';
+        render();
+        showToast('अकाउंट सफलतापूर्वक बन गया!');
+      } else {
+        const email = f.email.value.trim().toLowerCase();
+        const user = DB.users.find(u => u.email === email || u.phone === email);
+        if (!user) return showToast('इस ईमेल/मोबाइल से कोई अकाउंट नहीं मिला।');
+        user.password = f.newpass.value;
+        saveDB();
+        UI.authMode = 'login';
+        render();
+        showToast('पासवर्ड बदल दिया गया! अब लॉगिन करें।');
+      }
+    }
+
+    function logout() {
+      stopYTTrack();
+      DB.currentUserId = null;
+      saveDB();
+      render();
+    }
+
+    function go(screen, param = null) {
+      stopYTTrack();
+      UI.screen = screen;
+      if (screen === 'profile') UI.profileUid = param || me().uid;
+      render();
+      window.scrollTo(0, 0);
+    }
+
+    function closeModal() {
+      stopYTTrack();
+      document.getElementById('modal-root').innerHTML = '';
+    }
+
+    // ---------- पोस्ट एक्शन ----------
+    function toggleLikePost(postId) {
+      const cur = me(); const p = DB.posts.find(x => x.id === postId);
+      if (!p) return;
+      const i = p.likes.indexOf(cur.uid);
+      if (i >= 0) p.likes.splice(i, 1); else p.likes.push(cur.uid);
+      saveDB(); render();
+    }
+
+    function toggleSavePost(postId) {
+      const cur = me();
+      const i = cur.savedPosts.indexOf(postId);
+      if (i >= 0) { cur.savedPosts.splice(i, 1); showToast('सेव सूची से हटाया गया।'); }
+      else { cur.savedPosts.push(postId); showToast('पोस्ट सेव कर ली गई!'); }
+      saveDB(); render();
+    }
+
+    function shareContent(title, text) {
+      if (navigator.share) navigator.share({ title, text }).catch(() => {});
+      else {
+        navigator.clipboard?.writeText(text).catch(() => {});
+        showToast('शेयर जानकारी कॉपी हो गई!');
+      }
+    }
+
+    function deletePost(postId) {
+      if (!confirm('क्या आप वाकई यह पोस्ट हटाना चाहते हैं?')) return;
+      if (activePlayingKey === 'post_' + postId) stopYTTrack();
+      DB.posts = DB.posts.filter(p => p.id !== postId);
+      saveDB(); closeModal(); render();
+      showToast('पोस्ट हटा दी गई।');
+    }
+
+    function openCommentsModal(kind, id) {
+      const item = kind === 'post' ? DB.posts.find(p => p.id === id) : DB.reels.find(r => r.id === id);
+      if (!item) return;
+      const cur = me();
+      const rows = item.comments.length === 0
+        ? '<p style="text-align:center;color:#94a3b8;font-size:13px;padding:20px;">अभी कोई कमेंट नहीं है। पहला कमेंट लिखें!</p>'
+        : item.comments.map(c => {
+            const u = getUser(c.authorId);
+            return `<div class="between" style="padding:8px 0;border-bottom:1px solid #f1f5f9;">
+              <div style="font-size:13px;">
+                <b onclick="closeModal();go('profile','${c.authorId}')" style="cursor:pointer;">${esc(u?.name || 'यूज़र')}:</b>
+                <span>${esc(c.text)}</span>
+              </div>
+              ${c.authorId === cur.uid ? `<button onclick="deleteComment('${kind}','${id}','${c.id}')" style="color:#ef4444;font-size:12px;">हटाएँ</button>` : ''}
+            </div>`;
+          }).join('');
+
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad">
+            <div class="between" style="margin-bottom:10px;">
+              <h3 style="margin:0;font-size:16px;">कमेंट्स (${item.comments.length})</h3>
+              <button onclick="closeModal()" style="font-size:20px;">✕</button>
+            </div>
+            <div style="max-height:260px;overflow-y:auto;margin-bottom:12px;">${rows}</div>
+            <form onsubmit="submitComment(event,'${kind}','${id}')" class="row">
+              <input name="text" class="input" placeholder="कमेंट लिखें..." required />
+              <button type="submit" class="btn btn-primary" style="width:auto;">भेजें</button>
+            </form>
+          </div>
+        </div>`;
+    }
+
+    function submitComment(e, kind, id) {
+      e.preventDefault();
+      const text = e.target.text.value.trim();
+      if (!text) return;
+      const item = kind === 'post' ? DB.posts.find(p => p.id === id) : DB.reels.find(r => r.id === id);
+      if (!item) return;
+      item.comments.push({ id: 'c_' + Date.now(), authorId: me().uid, text, createdAt: Date.now() });
+      saveDB(); render(); openCommentsModal(kind, id);
+    }
+
+    function deleteComment(kind, id, cid) {
+      const item = kind === 'post' ? DB.posts.find(p => p.id === id) : DB.reels.find(r => r.id === id);
+      if (!item) return;
+      item.comments = item.comments.filter(c => c.id !== cid);
+      saveDB(); render(); openCommentsModal(kind, id);
+    }
+
+    // ---------- क्रिएशन मेनू + YouTube संगीत और वॉइस मिक्सर अपलोडर ----------
+    function openCreateMenu() {
+      stopYTTrack();
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="between"><h3 style="margin:0;">क्या साझा करना चाहते हैं?</h3><button onclick="closeModal()">✕</button></div>
+            <button onclick="openUploadModal('post')" class="btn btn-soft" style="justify-content:flex-start;">🖼️ फोटो या वीडियो पोस्ट बनाएँ</button>
+            <button onclick="openUploadModal('story')" class="btn btn-soft" style="justify-content:flex-start;">✨ 24 घंटे की स्टोरी (YouTube संगीत सहित)</button>
+            <button onclick="openUploadModal('reel')" class="btn btn-soft" style="justify-content:flex-start;">🎬 नई रील अपलोड करें (YouTube संगीत सहित)</button>
+          </div>
+        </div>`;
+    }
+
+    function openUploadModal(kind) {
+      stopYTTrack();
+      uploadDraft = {
+        kind,
+        file: null,
+        previewUrl: '',
+        isVideo: false,
+        music: null,
+        songSearch: '',
+        originalVolume: 80,
+        musicVolume: 75
+      };
+      renderUploadModal();
+    }
+
+    function renderSongPickerList() {
+      const q = uploadDraft.songSearch.trim().toLowerCase();
+      const filtered = TRENDING_SONGS.filter(s =>
+        !q || s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q)
+      );
+      return filtered.map(s => {
+        const isSel = uploadDraft.music && uploadDraft.music.videoId === s.videoId;
+        const isPlay = activePlayingKey === 'preview_' + s.videoId;
+        return `
+          <div class="song-row ${isSel ? 'selected' : ''}">
+            <div style="min-width:0;flex:1;">
+              <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🎵 ${esc(s.title)}</div>
+              <div style="font-size:11px;color:#64748b;">${esc(s.artist)} • ID: ${s.videoId}</div>
+            </div>
+            <div class="row" style="gap:6px;flex-shrink:0;">
+              <button type="button" onclick="previewSong('${s.videoId}')" class="btn btn-soft" style="padding:6px 10px;font-size:12px;">${isPlay ? '⏸️' : '▶️'}</button>
+              <button type="button" onclick="selectTrendingSong('${s.videoId}')" class="btn ${isSel ? 'btn-primary' : 'btn-dark'}" style="padding:6px 10px;font-size:12px;width:auto;">${isSel ? '✓ चुना' : 'चुनें'}</button>
+            </div>
+          </div>`;
+      }).join('') || '<p style="font-size:12px;color:#64748b;text-align:center;">इस नाम का ट्रेंडिंग गाना नहीं मिला — आप ऊपर कोई भी YouTube लिंक पेस्ट कर सकते हैं!</p>';
+    }
+
+    function renderUploadModal() {
+      const kind = uploadDraft.kind;
+      const title = kind === 'post' ? 'नई पोस्ट बनाएँ' : kind === 'story' ? '24 घंटे की स्टोरी लगाएँ' : 'नई रील अपलोड करें';
+      const accept = kind === 'reel' ? 'video/*' : 'image/*,video/*';
+
+      const previewHtml = !uploadDraft.previewUrl ? `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+          <label class="btn btn-soft" style="text-align:center;">📁 गैलरी से चुनें
+            <input type="file" accept="${accept}" class="hidden" onchange="onDraftFileSelected(this)" />
+          </label>
+          <label class="btn btn-soft" style="text-align:center;">📷 कैमरे से बनाएँ
+            <input type="file" accept="${accept}" capture="environment" class="hidden" onchange="onDraftFileSelected(this)" />
+          </label>
+        </div>` : `
+        <div style="position:relative;margin-bottom:10px;">
+          ${uploadDraft.isVideo
+            ? `<video id="draft-preview-vid" src="${uploadDraft.previewUrl}" controls playsinline style="width:100%;max-height:220px;border-radius:14px;background:#000;"></video>`
+            : `<img src="${uploadDraft.previewUrl}" style="width:100%;max-height:220px;object-fit:contain;border-radius:14px;background:#000;" />`}
+          <button type="button" onclick="clearDraftFile()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.72);color:#fff;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;">फ़ाइल बदलें</button>
+        </div>`;
+
+      const selectedMusicBanner = uploadDraft.music ? `
+        <div style="background:linear-gradient(90deg,#fff7ed,#fdf2f8);border:1px solid #fb923c;border-radius:14px;padding:10px;margin-bottom:10px;">
+          <div class="between">
+            <div style="font-size:12px;">
+              <b>🎵 चुना गया YouTube गाना:</b><br/>
+              ${esc(uploadDraft.music.title)} (${esc(uploadDraft.music.artist)})
+            </div>
+            <button type="button" onclick="removeDraftMusic()" class="btn btn-danger" style="padding:5px 9px;font-size:11px;">हटाएँ</button>
+          </div>
+        </div>` : '';
+
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad">
+            <div class="between" style="margin-bottom:12px;">
+              <h3 style="margin:0;font-size:17px;">${title}</h3>
+              <button type="button" onclick="closeModal()" style="font-size:18px;">✕</button>
+            </div>
+
+            ${previewHtml}
+
+            <textarea id="up-caption" class="input" rows="2" placeholder="कैप्शन लिखें..."></textarea>
+
+            <!-- YouTube संगीत जोड़ने का सेक्शन -->
+            <div class="mixer-box">
+              <div class="between" style="margin-bottom:8px;">
+                <b style="font-size:13px;">🎶 YouTube से संगीत जोड़ें (Add Music from YouTube)</b>
+              </div>
+
+              ${selectedMusicBanner}
+
+              <div class="row" style="margin-bottom:8px;">
+                <input id="yt-search-input" class="input" style="padding:8px 11px;font-size:13px;" value="${esc(uploadDraft.songSearch)}" oninput="onSongSearchInput(this.value)" placeholder="गाना खोजें या YouTube लिंक / Video ID पेस्ट करें..." />
+                <button type="button" onclick="applyCustomYouTubeLink()" class="btn btn-dark" style="padding:8px 12px;font-size:12px;white-space:nowrap;">लिंक जोड़ें</button>
+              </div>
+
+              <div id="yt-song-list" style="max-height:170px;overflow-y:auto;">
+                ${renderSongPickerList()}
+              </div>
+
+              <!-- वॉइस सेटिंग (वॉइस मिक्सर: 0% से 100%) -->
+              <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0;">
+                <b style="font-size:13px;display:block;margin-bottom:8px;">🎚️ वॉइस सेटिंग (Voice Mixer)</b>
+
+                <div style="margin-bottom:8px;">
+                  <div class="between" style="font-size:12px;font-weight:700;margin-bottom:2px;">
+                    <span>🎬 वीडियो की असली आवाज़ (Original Sound)</span>
+                    <span id="orig-vol-label">${uploadDraft.originalVolume}%</span>
+                  </div>
+                  <input type="range" min="0" max="100" value="${uploadDraft.originalVolume}" class="slider" oninput="onOriginalVolChange(this.value)" />
+                </div>
+
+                <div>
+                  <div class="between" style="font-size:12px;font-weight:700;margin-bottom:2px;">
+                    <span>🎵 यूट्यूब संगीत आवाज़ (YouTube Music Volume)</span>
+                    <span id="yt-vol-label">${uploadDraft.musicVolume}%</span>
+                  </div>
+                  <input type="range" min="0" max="100" value="${uploadDraft.musicVolume}" class="slider" oninput="onMusicVolChange(this.value)" />
+                </div>
+              </div>
+            </div>
+
+            <div id="up-progress-wrap" class="hidden" style="margin-top:10px;">
+              <div class="between" style="font-size:12px;margin-bottom:4px;"><span>सेव हो रहा है...</span><span id="up-pct">0%</span></div>
+              <div class="progress-bar"><div id="up-fill" class="progress-fill" style="width:0%"></div></div>
+            </div>
+
+            <button id="up-submit" type="button" onclick="publishUpload()" class="btn btn-primary" style="margin-top:12px;" ${!uploadDraft.file ? 'disabled' : ''}>
+              साझा करें
+            </button>
+          </div>
+        </div>`;
+
+      syncDraftPreviewVolume();
+    }
+
+    function onDraftFileSelected(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+      uploadDraft.file = file;
+      uploadDraft.isVideo = file.type.startsWith('video/');
+      uploadDraft.previewUrl = URL.createObjectURL(file);
+      renderUploadModal();
+    }
+
+    function clearDraftFile() {
+      uploadDraft.file = null;
+      uploadDraft.previewUrl = '';
+      uploadDraft.isVideo = false;
+      renderUploadModal();
+    }
+
+    function onSongSearchInput(val) {
+      uploadDraft.songSearch = val;
+      const box = document.getElementById('yt-song-list');
+      if (box) box.innerHTML = renderSongPickerList();
+    }
+
+    function previewSong(videoId) {
+      const key = 'preview_' + videoId;
+      if (activePlayingKey === key) {
+        stopYTTrack();
+      } else {
+        playYTTrack(videoId, uploadDraft.musicVolume, key);
+      }
+      const box = document.getElementById('yt-song-list');
+      if (box) box.innerHTML = renderSongPickerList();
+    }
+
+    function selectTrendingSong(videoId) {
+      const song = TRENDING_SONGS.find(s => s.videoId === videoId);
+      if (!song) return;
+      uploadDraft.music = { videoId: song.videoId, title: song.title, artist: song.artist };
+      playYTTrack(song.videoId, uploadDraft.musicVolume, 'preview_' + song.videoId);
+      const vid = document.getElementById('draft-preview-vid');
+      if (vid) {
+        vid.volume = uploadDraft.originalVolume / 100;
+        vid.muted = uploadDraft.originalVolume === 0;
+        vid.play().catch(() => {});
+      }
+      renderUploadModal();
+      showToast('गाना जोड़ा गया: ' + song.title);
+    }
+
+    function applyCustomYouTubeLink() {
+      const val = document.getElementById('yt-search-input')?.value || '';
+      const vidId = parseYouTubeId(val);
+      if (!vidId) {
+        return showToast('कृपया सही YouTube लिंक या 11 अक्षरों का Video ID पेस्ट करें।');
+      }
+      uploadDraft.music = {
+        videoId: vidId,
+        title: 'कस्टम YouTube गाना',
+        artist: 'ID: ' + vidId
+      };
+      playYTTrack(vidId, uploadDraft.musicVolume, 'preview_' + vidId);
+      renderUploadModal();
+      showToast('YouTube लिंक सफलतापूर्वक जोड़ा गया!');
+    }
+
+    function removeDraftMusic() {
+      uploadDraft.music = null;
+      stopYTTrack();
+      renderUploadModal();
+    }
+
+    function syncDraftPreviewVolume() {
+      const vid = document.getElementById('draft-preview-vid');
+      if (vid) {
+        vid.volume = uploadDraft.originalVolume / 100;
+        vid.muted = uploadDraft.originalVolume === 0;
+      }
+    }
+
+    function onOriginalVolChange(val) {
+      uploadDraft.originalVolume = Number(val);
+      const lbl = document.getElementById('orig-vol-label');
+      if (lbl) lbl.textContent = val + '%';
+      syncDraftPreviewVolume();
+    }
+
+    function onMusicVolChange(val) {
+      uploadDraft.musicVolume = Number(val);
+      const lbl = document.getElementById('yt-vol-label');
+      if (lbl) lbl.textContent = val + '%';
+      setYTVolume(val);
+    }
+
+    async function publishUpload() {
+      if (!uploadDraft.file) return;
+      const caption = document.getElementById('up-caption').value.trim();
+      const wrap = document.getElementById('up-progress-wrap');
+      const fill = document.getElementById('up-fill');
+      const pct = document.getElementById('up-pct');
+      document.getElementById('up-submit').disabled = true;
+      wrap.classList.remove('hidden');
+
+      for (let p = 25; p <= 75; p += 25) {
+        fill.style.width = p + '%'; pct.textContent = p + '%';
+        await new Promise(r => setTimeout(r, 90));
+      }
+
+      let mediaUrl = '';
+      if (uploadDraft.isVideo) {
+        const key = 'idb:vid_' + Date.now();
+        await saveMediaBlob(key, uploadDraft.file);
+        mediaUrl = key;
+      } else {
+        mediaUrl = await compressImage(uploadDraft.file);
+      }
+
+      fill.style.width = '100%'; pct.textContent = '100%';
+      const cur = me();
+      const now = Date.now();
+      const commonMusic = {
+        music: uploadDraft.music ? { ...uploadDraft.music } : null,
+        originalVolume: uploadDraft.originalVolume,
+        musicVolume: uploadDraft.musicVolume
+      };
+
+      if (uploadDraft.kind === 'post') {
+        DB.posts.unshift({
+          id: 'p_' + now, authorId: cur.uid, mediaUrl,
+          mediaType: uploadDraft.isVideo ? 'video' : 'image',
+          caption, ...commonMusic, likes: [], comments: [], createdAt: now
+        });
+        UI.screen = 'home';
+      } else if (uploadDraft.kind === 'story') {
+        DB.stories.push({
+          id: 's_' + now, authorId: cur.uid, mediaUrl,
+          mediaType: uploadDraft.isVideo ? 'video' : 'image',
+          caption, ...commonMusic, views: [], reactions: [],
+          createdAt: now, expiresAt: now + 24 * 3600 * 1000
+        });
+        UI.screen = 'home';
+      } else if (uploadDraft.kind === 'reel') {
+        DB.reels.unshift({
+          id: 'r_' + now, authorId: cur.uid, mediaUrl, isDemoArt: false,
+          caption, ...commonMusic, likes: [], comments: [], createdAt: now
+        });
+        UI.screen = 'reels';
+      }
+
+      saveDB();
+      closeModal();
+      render();
+      showToast('सफलतापूर्वक साझा किया गया!');
+    }
+
+    // ---------- स्टोरी व्यूअर (YouTube संगीत + वीडियो आवाज़ मिक्सर के साथ) ----------
+    function openStoryViewer(authorId, idx = 0) {
+      const list = getActiveStories().filter(s => s.authorId === authorId);
+      if (!list.length) return;
+      const st = list[idx] || list[0];
+      const author = getUser(st.authorId);
+      const cur = me();
+      const isMine = st.authorId === cur.uid;
+
+      if (!isMine && !st.views.some(v => v.uid === cur.uid)) {
+        st.views.unshift({ uid: cur.uid, viewedAt: Date.now() });
+        saveDB();
+      }
+
+      // स्टोरी का YouTube गाना चलाएँ
+      if (st.music && st.music.videoId) {
+        playYTTrack(st.music.videoId, st.musicVolume ?? 75, 'story_' + st.id);
+      } else {
+        stopYTTrack();
+      }
+
+      const mediaSrc = resolveMediaSrc(st.mediaUrl);
+      const origVol = (st.originalVolume ?? 80) / 100;
+      const mediaHtml = st.mediaType === 'video'
+        ? `<video id="story-active-vid" src="${mediaSrc}" autoplay playsinline controls style="width:100%;max-height:56vh;background:#000;border-radius:14px;"></video>`
+        : `<img src="${mediaSrc}" style="width:100%;max-height:56vh;object-fit:contain;background:#000;border-radius:14px;" />`;
+
+      const musicStickerHtml = st.music ? `
+        <div style="text-align:center;margin:8px 0;">
+          <button type="button" onclick="toggleStoryMusicMute('${st.id}',${st.musicVolume ?? 75})" class="music-pill-dark">
+            <span>🎵 ${esc(st.music.title)} • ${esc(st.music.artist)}</span>
+            <span id="story-music-state" style="color:#fdba74;">🔊</span>
+          </button>
+          <div style="font-size:10px;color:#94a3b8;margin-top:3px;">
+            वीडियो आवाज़: ${st.originalVolume ?? 80}% | YouTube संगीत: ${st.musicVolume ?? 75}%
+          </div>
+        </div>` : '';
+
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box" style="background:#0f172a;color:#fff;padding:14px;">
+            <div style="display:flex;gap:4px;margin-bottom:10px;">
+              ${list.map((_, i) => `<div style="flex:1;height:4px;border-radius:9px;background:${i <= idx ? '#fff' : 'rgba(255,255,255,0.3)'};"></div>`).join('')}
+            </div>
+            <div class="between" style="margin-bottom:10px;">
+              <div class="row" onclick="closeModal();go('profile','${author.uid}')" style="cursor:pointer;">
+                <img src="${uPhoto(author)}" class="avatar" style="width:36px;height:36px;" />
+                <div>
+                  <div style="font-size:13px;font-weight:700;">${esc(author.name)}</div>
+                  <div style="font-size:11px;color:#94a3b8;">${timeAgo(st.createdAt)}</div>
+                </div>
+              </div>
+              <div class="row">
+                ${idx > 0 ? `<button onclick="openStoryViewer('${authorId}',${idx - 1})" class="btn btn-soft" style="padding:4px 9px;">◀</button>` : ''}
+                ${idx < list.length - 1 ? `<button onclick="openStoryViewer('${authorId}',${idx + 1})" class="btn btn-soft" style="padding:4px 9px;">▶</button>` : ''}
+                ${isMine ? `<button onclick="deleteStory('${st.id}')" style="color:#f87171;font-size:15px;padding:4px;">🗑️</button>` : ''}
+                <button onclick="closeModal()" style="color:#fff;font-size:18px;padding:4px;">✕</button>
+              </div>
+            </div>
+            ${mediaHtml}
+            ${musicStickerHtml}
+            ${st.caption ? `<p style="text-align:center;font-size:13px;margin:8px 0;">${esc(st.caption)}</p>` : ''}
+            ${isMine ? `
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+                <button onclick="showStoryStats('${st.id}','views')" class="btn" style="background:rgba(255,255,255,0.14);color:#fff;">👁️ देखा (${st.views.length})</button>
+                <button onclick="showStoryStats('${st.id}','reactions')" class="btn" style="background:rgba(255,255,255,0.14);color:#fff;">❤️ प्रतिक्रियाएँ (${st.reactions.length})</button>
+              </div>` : `
+              <div style="display:flex;justify-content:center;gap:10px;margin:10px 0;">
+                ${['❤️','🔥','😂','😍','👏'].map(em => `<button onclick="reactStory('${st.id}','${em}')" style="font-size:20px;background:rgba(255,255,255,0.15);border-radius:50%;width:38px;height:38px;">${em}</button>`).join('')}
+              </div>
+              <form onsubmit="event.preventDefault();reactStory('${st.id}',this.msg.value);this.reset();" class="row">
+                <input name="msg" class="input" style="background:rgba(255,255,255,0.14);color:#fff;border-color:rgba(255,255,255,0.2);" placeholder="स्टोरी पर प्रतिक्रिया लिखें..." required />
+                <button type="submit" class="btn btn-primary" style="width:auto;">भेजें</button>
+              </form>`}
+          </div>
+        </div>`;
+
+      const sv = document.getElementById('story-active-vid');
+      if (sv) {
+        sv.volume = origVol;
+        sv.muted = origVol === 0;
+        sv.play().catch(() => {});
+      }
+    }
+
+    function toggleStoryMusicMute(storyId, volPct) {
+      const stEl = document.getElementById('story-music-state');
+      if (!ytReady || !ytPlayer) return;
+      try {
+        if (ytPlayer.isMuted()) {
+          ytPlayer.unMute();
+          ytPlayer.setVolume(volPct);
+          ytPlayer.playVideo();
+          if (stEl) stEl.textContent = '🔊';
+        } else {
+          ytPlayer.mute();
+          if (stEl) stEl.textContent = '🔇';
+        }
+      } catch {}
+    }
+
+    function reactStory(storyId, msg) {
+      if (!msg || !msg.trim()) return;
+      const st = DB.stories.find(s => s.id === storyId);
+      if (!st) return;
+      st.reactions.unshift({ uid: me().uid, message: msg.trim(), createdAt: Date.now() });
+      saveDB();
+      showToast('प्रतिक्रिया भेजी गई!');
+    }
+
+    function deleteStory(storyId) {
+      stopYTTrack();
+      DB.stories = DB.stories.filter(s => s.id !== storyId);
+      saveDB(); closeModal(); render();
+      showToast('स्टोरी हटा दी गई।');
+    }
+
+    function showStoryStats(storyId, tab) {
+      const st = DB.stories.find(s => s.id === storyId);
+      if (!st) return;
+      const items = tab === 'views'
+        ? st.views.map(v => {
+            const u = getUser(v.uid);
+            return `<div class="between" style="padding:8px 0;border-bottom:1px solid #f1f5f9;"><b>${esc(u?.name || 'यूज़र')}</b><span style="font-size:11px;color:#64748b;">${timeAgo(v.viewedAt)}</span></div>`;
+          }).join('')
+        : st.reactions.map(r => {
+            const u = getUser(r.uid);
+            return `<div class="between" style="padding:8px 0;border-bottom:1px solid #f1f5f9;"><div><b>${esc(u?.name || 'यूज़र')}</b>: ${esc(r.message)}</div><span style="font-size:11px;color:#64748b;">${timeAgo(r.createdAt)}</span></div>`;
+          }).join('');
+
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad">
+            <div class="between" style="margin-bottom:10px;">
+              <h3 style="margin:0;">${tab === 'views' ? 'स्टोरी देखने वाले' : 'स्टोरी प्रतिक्रियाएँ'}</h3>
+              <button onclick="openStoryViewer('${st.authorId}')">✕</button>
+            </div>
+            ${items || '<p style="text-align:center;color:#94a3b8;">अभी कोई जानकारी नहीं है।</p>'}
+          </div>
+        </div>`;
+    }
+
+    // ---------- रील्स नियंत्रण ----------
+    function playReelWithMusic(reelId) {
+      const r = DB.reels.find(x => x.id === reelId);
+      if (!r) return;
+      const vid = document.getElementById('reel-vid-' + reelId);
+      if (vid) {
+        const ov = UI.reelsMuted ? 0 : (r.originalVolume ?? 80) / 100;
+        vid.volume = ov;
+        vid.muted = ov === 0;
+        if (vid.paused) {
+          vid.play().catch(() => {});
+          if (r.music && !UI.reelsMuted) playYTTrack(r.music.videoId, r.musicVolume ?? 75, 'reel_' + r.id);
+        } else {
+          vid.pause();
+          if (activePlayingKey === 'reel_' + r.id) stopYTTrack();
+        }
+        const badge = document.getElementById('reel-play-badge-' + reelId);
+        if (badge) badge.classList.toggle('hidden', !vid.paused);
+      } else if (r.music) {
+        if (activePlayingKey === 'reel_' + r.id) stopYTTrack();
+        else playYTTrack(r.music.videoId, UI.reelsMuted ? 0 : (r.musicVolume ?? 75), 'reel_' + r.id);
+      }
+    }
+
+    function toggleReelMute() {
+      UI.reelsMuted = !UI.reelsMuted;
+      document.querySelectorAll('.reel-video').forEach(v => {
+        const rid = v.id.replace('reel-vid-', '');
+        const r = DB.reels.find(x => x.id === rid);
+        const ov = UI.reelsMuted ? 0 : ((r?.originalVolume ?? 80) / 100);
+        v.volume = ov;
+        v.muted = ov === 0;
+      });
+      if (UI.reelsMuted) setYTVolume(0);
+      else if (activePlayingKey && activePlayingKey.startsWith('reel_')) {
+        const rid = activePlayingKey.replace('reel_', '');
+        const r = DB.reels.find(x => x.id === rid);
+        setYTVolume(r?.musicVolume ?? 75);
+      }
+      render();
+    }
+
+    function toggleLikeReel(reelId) {
+      const cur = me(); const r = DB.reels.find(x => x.id === reelId);
+      if (!r) return;
+      const i = r.likes.indexOf(cur.uid);
+      if (i >= 0) r.likes.splice(i, 1); else r.likes.push(cur.uid);
+      saveDB(); render();
+    }
+
+    function deleteReel(reelId) {
+      if (!confirm('क्या आप यह रील हटाना चाहते हैं?')) return;
+      if (activePlayingKey === 'reel_' + reelId) stopYTTrack();
+      DB.reels = DB.reels.filter(r => r.id !== reelId);
+      saveDB(); render();
+    }
+
+    // ---------- प्रोफाइल और फॉलो ----------
+    function toggleFollow(targetUid) {
+      const cur = me(); const target = getUser(targetUid);
+      if (!cur || !target) return;
+      if (target.followers.includes(cur.uid)) {
+        target.followers = target.followers.filter(id => id !== cur.uid);
+        cur.following = cur.following.filter(id => id !== targetUid);
+      } else if (target.isPrivate) {
+        const idx = target.followRequests.indexOf(cur.uid);
+        if (idx >= 0) target.followRequests.splice(idx, 1);
+        else target.followRequests.push(cur.uid);
+      } else {
+        target.followers.push(cur.uid);
+        cur.following.push(targetUid);
+      }
+      saveDB(); render();
+    }
+
+    function acceptFollowReq(fromUid) {
+      const cur = me(); const from = getUser(fromUid);
+      if (!cur || !from) return;
+      cur.followRequests = cur.followRequests.filter(id => id !== fromUid);
+      if (!cur.followers.includes(fromUid)) cur.followers.push(fromUid);
+      if (!from.following.includes(cur.uid)) from.following.push(cur.uid);
+      saveDB(); render();
+    }
+
+    function rejectFollowReq(fromUid) {
+      const cur = me();
+      cur.followRequests = cur.followRequests.filter(id => id !== fromUid);
+      saveDB(); render();
+    }
+
+    async function changeMyAvatar(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+      me().photoURL = await compressImage(file, 320);
+      saveDB(); render();
+      showToast('प्रोफाइल फोटो अपडेट हो गई!');
+    }
+
+    function openEditProfileModal() {
+      const cur = me();
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad">
+            <div class="between" style="margin-bottom:12px;"><h3 style="margin:0;">प्रोफाइल बदलें</h3><button onclick="closeModal()">✕</button></div>
+            <form onsubmit="saveProfileEdit(event)" style="display:flex;flex-direction:column;gap:10px;">
+              <input name="name" class="input" value="${esc(cur.name)}" placeholder="पूरा नाम" required />
+              <textarea name="bio" class="input" rows="3" placeholder="अपना परिचय लिखें">${esc(cur.bio)}</textarea>
+              <input name="phone" class="input" value="${esc(cur.phone)}" placeholder="मोबाइल नंबर" />
+              <label class="between" style="padding:10px;background:#f8fafc;border-radius:12px;font-size:13px;font-weight:600;">
+                <span>प्राइवेट अकाउंट रखें</span>
+                <input name="isPrivate" type="checkbox" ${cur.isPrivate ? 'checked' : ''} />
+              </label>
+              <button type="submit" class="btn btn-primary">बदलाव सहेजें</button>
+            </form>
+          </div>
+        </div>`;
+    }
+
+    function saveProfileEdit(e) {
+      e.preventDefault();
+      const cur = me();
+      cur.name = e.target.name.value.trim();
+      cur.bio = e.target.bio.value.trim();
+      cur.phone = e.target.phone.value.trim();
+      cur.isPrivate = e.target.isPrivate.checked;
+      saveDB(); closeModal(); render();
+      showToast('प्रोफाइल सहेजी गई!');
+    }
+
+    function openPasswordModal() {
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad">
+            <div class="between" style="margin-bottom:12px;"><h3 style="margin:0;">पासवर्ड बदलें</h3><button onclick="closeModal()">✕</button></div>
+            <form onsubmit="saveNewPassword(event)" style="display:flex;flex-direction:column;gap:10px;">
+              <input name="oldp" type="password" class="input" placeholder="वर्तमान पासवर्ड" required />
+              <input name="newp" type="password" class="input" placeholder="नया पासवर्ड (कम से कम 6 अक्षर)" minlength="6" required />
+              <button type="submit" class="btn btn-primary">पासवर्ड अपडेट करें</button>
+            </form>
+          </div>
+        </div>`;
+    }
+
+    function saveNewPassword(e) {
+      e.preventDefault();
+      const cur = me();
+      if (e.target.oldp.value !== cur.password) return showToast('वर्तमान पासवर्ड गलत है।');
+      cur.password = e.target.newp.value;
+      saveDB(); closeModal();
+      showToast('पासवर्ड बदल दिया गया!');
+    }
+
+    function openPeopleModal(uid, kind) {
+      const u = getUser(uid);
+      if (!u) return;
+      const ids = kind === 'followers' ? u.followers : u.following;
+      const title = kind === 'followers' ? 'फॉलोअर्स' : 'फॉलोइंग';
+      const rows = ids.map(id => getUser(id)).filter(Boolean).map(p => `
+        <div onclick="closeModal();go('profile','${p.uid}')" class="row" style="padding:10px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;">
+          <img src="${uPhoto(p)}" class="avatar" style="width:40px;height:40px;" />
+          <div><div style="font-size:14px;font-weight:700;">${esc(p.name)}</div><div style="font-size:12px;color:#64748b;">@${esc(p.username)}</div></div>
+        </div>`).join('');
+
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box card-pad">
+            <div class="between" style="margin-bottom:8px;"><h3 style="margin:0;">${title} (${ids.length})</h3><button onclick="closeModal()">✕</button></div>
+            ${rows || '<p style="text-align:center;color:#94a3b8;">सूची खाली है।</p>'}
+          </div>
+        </div>`;
+    }
+
+    // ---------- पोस्ट कार्ड ----------
+    function renderPostCard(p) {
+      const cur = me();
+      const author = getUser(p.authorId);
+      if (!author) return '';
+      const liked = p.likes.includes(cur.uid);
+      const saved = cur.savedPosts.includes(p.id);
+      const mSrc = resolveMediaSrc(p.mediaUrl);
+      const isPlaying = activePlayingKey === 'post_' + p.id;
+
+      const musicBar = p.music ? `
+        <div class="music-sticker">
+          <div style="min-width:0;flex:1;">
+            <div style="font-weight:800;color:#9a3412;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🎵 ${esc(p.music.title)} • ${esc(p.music.artist)}</div>
+            <div style="font-size:10px;color:#64748b;">वीडियो: ${p.originalVolume ?? 80}% | YouTube संगीत: ${p.musicVolume ?? 75}%</div>
+          </div>
+          <button type="button" onclick="togglePostMusic('${p.id}')" data-music-key="post_${p.id}" class="btn btn-dark" style="padding:6px 11px;font-size:11px;width:auto;">
+            ${isPlaying ? '⏸️ रोकें' : '▶️ सुनें'}
+          </button>
+        </div>` : '';
+
+      return `
+        <article class="card">
+          <div class="between" style="padding:12px 14px;">
+            <div class="row" onclick="go('profile','${author.uid}')" style="cursor:pointer;">
+              <img src="${uPhoto(author)}" class="avatar" style="width:40px;height:40px;" />
+              <div>
+                <div style="font-size:14px;font-weight:700;">${esc(author.name)}</div>
+                <div style="font-size:11px;color:#64748b;">@${esc(author.username)} • ${timeAgo(p.createdAt)}</div>
+              </div>
+            </div>
+            ${author.uid === cur.uid
+              ? `<button onclick="deletePost('${p.id}')" title="पोस्ट हटाएँ" style="font-size:16px;">🗑️</button>`
+              : ''}
+          </div>
+
+          ${p.mediaType === 'video'
+            ? `<video id="post-vid-${p.id}" src="${mSrc}" controls playsinline class="post-media" data-orig-vol="${p.originalVolume ?? 80}" onloadedmetadata="this.volume=Number(this.dataset.origVol)/100;this.muted=(this.volume===0);"></video>`
+            : `<img src="${mSrc}" class="post-media" />`}
+
+          ${musicBar}
+
+          <div style="padding:12px 14px;">
+            <div class="between" style="margin-bottom:8px;">
+              <div class="row" style="gap:16px;">
+                <button onclick="toggleLikePost('${p.id}')" style="font-size:14px;font-weight:700;color:${liked ? '#E11D48' : '#334155'};">
+                  ${liked ? '❤️' : '🤍'} ${p.likes.length}
+                </button>
+                <button onclick="openCommentsModal('post','${p.id}')" style="font-size:14px;font-weight:700;color:#334155;">
+                  💬 ${p.comments.length}
+                </button>
+                <button onclick="shareContent('YAARI पोस्ट','${esc(author.name)} की पोस्ट देखें')" style="font-size:16px;">📤</button>
+              </div>
+              <button onclick="toggleSavePost('${p.id}')" style="font-size:18px;">${saved ? '🔖' : '📑'}</button>
+            </div>
+            ${p.caption ? `<p style="margin:0;font-size:14px;line-height:1.45;"><b>${esc(author.name)}</b> ${esc(p.caption)}</p>` : ''}
+          </div>
+        </article>`;
+    }
+
+    function openPostDetailModal(postId) {
+      const p = DB.posts.find(x => x.id === postId);
+      if (!p) return showToast('यह पोस्ट उपलब्ध नहीं है।');
+      document.getElementById('modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+          <div class="modal-box" style="background:transparent;box-shadow:none;">
+            <div style="text-align:right;margin-bottom:6px;"><button onclick="closeModal()" style="background:#fff;border-radius:50%;width:34px;height:34px;font-weight:800;">✕</button></div>
+            ${renderPostCard(p)}
+          </div>
+        </div>`;
+    }
+
+    // ---------- पेज व्यूज़ ----------
+    function renderAuthScreen() {
+      const m = UI.authMode;
+      return `
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:linear-gradient(135deg,#fff7ed,#fff1f2,#f5f3ff);">
+          <div class="card card-pad" style="width:100%;max-width:420px;padding:24px;">
+            <div style="text-align:center;margin-bottom:20px;">
+              <div class="logo" style="justify-content:center;">
+                <div class="logo-badge" style="width:46px;height:46px;font-size:22px;">Y</div>
+                <span class="logo-text" style="font-size:32px;">YAARI</span>
+              </div>
+              <p style="color:#64748b;font-size:13px;margin:8px 0 0;">
+                ${m === 'login' ? 'अपने दोस्तों से जुड़ें, YouTube संगीत के साथ पल साझा करें' : m === 'signup' ? 'YAARI पर नया अकाउंट बनाएँ' : 'पासवर्ड रीसेट करें'}
+              </p>
+            </div>
+
+            <form onsubmit="handleAuthSubmit(event)" style="display:flex;flex-direction:column;gap:10px;">
+              ${m === 'signup' ? `
+                <input name="name" class="input" placeholder="पूरा नाम" required />
+                <input name="username" class="input" placeholder="यूज़रनेम (जैसे: rohit_12)" required />
+                <input name="phone" class="input" placeholder="मोबाइल नंबर (वैकल्पिक)" />
+              ` : ''}
+              ${m !== 'login' ? `<input name="email" class="input" type="email" placeholder="ईमेल पता" required />` : `<input name="identifier" class="input" placeholder="ईमेल, मोबाइल नंबर या यूज़रनेम" required />`}
+              ${m !== 'forgot' ? `<input name="password" class="input" type="password" placeholder="पासवर्ड" minlength="6" required />` : `<input name="newpass" class="input" type="password" placeholder="नया पासवर्ड (कम से कम 6 अक्षर)" minlength="6" required />`}
+              ${m === 'login' ? `<div style="text-align:right;"><button type="button" onclick="setAuthMode('forgot')" style="color:#E11D48;font-size:12px;font-weight:700;">पासवर्ड भूल गए?</button></div>` : ''}
+              <button type="submit" class="btn btn-primary" style="padding:13px;">
+                ${m === 'login' ? 'लॉगिन करें' : m === 'signup' ? 'नया अकाउंट बनाएँ' : 'पासवर्ड बदलें'}
+              </button>
+            </form>
+
+            <div style="text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid #f1f5f9;font-size:13px;">
+              ${m === 'login'
+                ? `अकाउंट नहीं है? <button onclick="setAuthMode('signup')" style="color:#FF5A36;font-weight:800;">नया अकाउंट बनाएँ</button>`
+                : `पहले से अकाउंट है? <button onclick="setAuthMode('login')" style="color:#FF5A36;font-weight:800;">लॉगिन करें</button>`}
+            </div>
+
+            <div style="margin-top:14px;padding:12px;background:#f8fafc;border-radius:16px;border:1px solid #e2e8f0;">
+              <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;text-align:center;">⚡ 1-क्लिक में टेस्ट अकाउंट बदलें (पासवर्ड: 123456)</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <button onclick="quickLogin('aarav@yaari.in')" class="btn btn-soft" style="font-size:12px;">आरव शर्मा</button>
+                <button onclick="quickLogin('priya@yaari.in')" class="btn btn-soft" style="font-size:12px;">प्रिया वर्मा</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderHome() {
+      const cur = me();
+      const stories = getActiveStories();
+      const myStories = stories.filter(s => s.authorId === cur.uid);
+      const otherAuthorIds = [...new Set(stories.filter(s => s.authorId !== cur.uid).map(s => s.authorId))];
+
+      const storyBarHtml = `
+        <div class="card">
+          <div class="stories-row">
+            <div class="story-item">
+              <div class="story-ring ${myStories.length ? '' : 'empty'}" onclick="${myStories.length ? `openStoryViewer('${cur.uid}')` : `openUploadModal('story')`}" style="cursor:pointer;">
+                <img src="${uPhoto(cur)}" />
+                <button onclick="event.stopPropagation();openUploadModal('story')" class="story-plus">+</button>
+              </div>
+              <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">आपकी स्टोरी</div>
+            </div>
+            ${otherAuthorIds.map(aid => {
+              const u = getUser(aid);
+              const uStories = stories.filter(s => s.authorId === aid);
+              const allSeen = uStories.every(s => s.views.some(v => v.uid === cur.uid));
+              return `
+                <div class="story-item" onclick="openStoryViewer('${aid}')" style="cursor:pointer;">
+                  <div class="story-ring ${allSeen ? 'seen' : ''}">
+                    <img src="${uPhoto(u)}" />
+                  </div>
+                  <div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.name.split(' ')[0])}</div>
+                </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+
+      const feedPosts = DB.posts.filter(p => canViewAuthor(getUser(p.authorId)));
+      const postsHtml = feedPosts.length
+        ? feedPosts.map(renderPostCard).join('')
+        : `<div class="card card-pad" style="text-align:center;"><p>अभी कोई पोस्ट नहीं है।</p><button onclick="openUploadModal('post')" class="btn btn-primary" style="width:auto;">पहली पोस्ट बनाएँ</button></div>`;
+
+      return storyBarHtml + postsHtml;
+    }
+
+    function filterSearch(val) {
+      UI.searchQuery = val;
+      const box = document.getElementById('search-results-box');
+      if (box) box.innerHTML = renderSearchResultsHtml();
+    }
+
+    function renderSearchResultsHtml() {
+      const q = UI.searchQuery.trim().toLowerCase();
+      if (UI.searchTab === 'explore') {
+        const list = DB.posts
+          .filter(p => canViewAuthor(getUser(p.authorId)))
+          .filter(p => !q || p.caption.toLowerCase().includes(q) || getUser(p.authorId)?.name.toLowerCase().includes(q))
+          .sort((a, b) => b.likes.length - a.likes.length);
+        return list.length
+          ? `<div class="card"><div class="grid-3">${list.map(p => {
+              const s = resolveMediaSrc(p.mediaUrl);
+              return `<div class="grid-cell" onclick="openPostDetailModal('${p.id}')" style="cursor:pointer;">${p.mediaType === 'video' ? `<video src="${s}"></video>` : `<img src="${s}" />`}</div>`;
+            }).join('')}</div></div>`
+          : `<div class="card card-pad" style="text-align:center;color:#64748b;">कोई पोस्ट नहीं मिली।</div>`;
+      }
+      const users = DB.users.filter(u => !q || u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q));
+      return `<div class="card">${users.map(u => `
+        <div onclick="go('profile','${u.uid}')" class="between" style="padding:12px 14px;border-bottom:1px solid #f1f5f9;cursor:pointer;">
+          <div class="row">
+            <img src="${uPhoto(u)}" class="avatar" style="width:44px;height:44px;" />
+            <div><div style="font-size:14px;font-weight:700;">${esc(u.name)}</div><div style="font-size:12px;color:#64748b;">@${esc(u.username)}</div></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:#FF5A36;">प्रोफाइल देखें</span>
+        </div>`).join('') || '<div class="card-pad" style="text-align:center;">कोई व्यक्ति नहीं मिला।</div>'}</div>`;
+    }
+
+    function renderSearch() {
+      return `
+        <input class="input" style="margin-bottom:10px;" value="${esc(UI.searchQuery)}" oninput="filterSearch(this.value)" placeholder="🔍 लोगों, फोटो या वीडियो को खोजें..." />
+        <div class="tabs">
+          <button onclick="UI.searchTab='explore';render();" class="tab-btn ${UI.searchTab === 'explore' ? 'active' : ''}">🔥 लोकप्रिय पोस्ट</button>
+          <button onclick="UI.searchTab='users';render();" class="tab-btn ${UI.searchTab === 'users' ? 'active' : ''}">👥 लोग खोजें</button>
+        </div>
+        <div id="search-results-box">${renderSearchResultsHtml()}</div>`;
+    }
+
+    function renderReels() {
+      const cur = me();
+      const reels = DB.reels.filter(r => canViewAuthor(getUser(r.authorId)));
+      return `
+        <div class="reels-wrap">
+          <div class="between" style="position:fixed;top:0;left:0;right:0;z-index:30;padding:12px 16px;background:linear-gradient(to bottom,rgba(0,0,0,0.75),transparent);color:#fff;max-width:560px;margin:0 auto;">
+            <span style="font-weight:900;font-size:18px;">YAARI रील्स</span>
+            <button onclick="openUploadModal('reel')" class="btn" style="background:var(--grad);color:#fff;padding:7px 14px;font-size:12px;">+ रील बनाएँ</button>
+          </div>
+          ${reels.length === 0 ? `
+            <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:10px;">
+              <p>अभी कोई रील उपलब्ध नहीं है</p>
+              <button onclick="openUploadModal('reel')" class="btn btn-primary" style="width:auto;">पहली रील अपलोड करें</button>
+            </div>
+          ` : reels.map(r => {
+            const author = getUser(r.authorId);
+            const liked = r.likes.includes(cur.uid);
+            const mSrc = resolveMediaSrc(r.mediaUrl);
+            const isPlayingYT = activePlayingKey === 'reel_' + r.id;
+            return `
+              <div class="reel-slide">
+                ${r.isDemoArt
+                  ? `<img src="${mSrc}" onclick="playReelWithMusic('${r.id}')" style="width:100%;height:100%;object-fit:contain;cursor:pointer;" />`
+                  : `<video id="reel-vid-${r.id}" src="${mSrc}" class="reel-video" loop playsinline data-orig-vol="${r.originalVolume ?? 80}" onloadedmetadata="this.volume=(UI.reelsMuted?0:Number(this.dataset.origVol)/100);this.muted=(this.volume===0);" onclick="playReelWithMusic('${r.id}')"></video>`}
+                <div id="reel-play-badge-${r.id}" class="hidden" style="position:absolute;width:64px;height:64px;border-radius:50%;background:rgba(0,0,0,0.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;pointer-events:none;">▶</div>
+
+                <div class="reel-actions">
+                  <button onclick="toggleLikeReel('${r.id}')" class="reel-act-btn"><div class="reel-act-circle">${liked ? '❤️' : '🤍'}</div><span>${r.likes.length}</span></button>
+                  <button onclick="openCommentsModal('reel','${r.id}')" class="reel-act-btn"><div class="reel-act-circle">💬</div><span>${r.comments.length}</span></button>
+                  <button onclick="shareContent('YAARI रील','${esc(author.name)} की रील देखें')" class="reel-act-btn"><div class="reel-act-circle">📤</div><span>शेयर</span></button>
+                  <button onclick="toggleReelMute()" class="reel-act-btn"><div class="reel-act-circle">${UI.reelsMuted ? '🔇' : '🔊'}</div><span>${UI.reelsMuted ? 'म्यूट' : 'आवाज़'}</span></button>
+                  ${author.uid === cur.uid ? `<button onclick="deleteReel('${r.id}')" class="reel-act-btn"><div class="reel-act-circle">🗑️</div></button>` : ''}
+                </div>
+
+                <div style="position:absolute;left:14px;right:76px;bottom:24px;color:#fff;text-shadow:0 1px 4px #000;">
+                  <div class="row" onclick="go('profile','${author.uid}')" style="cursor:pointer;margin-bottom:6px;">
+                    <img src="${uPhoto(author)}" class="avatar" style="width:38px;height:38px;border-color:#fff;" />
+                    <div><b>${esc(author.name)}</b><div style="font-size:11px;opacity:0.85;">@${esc(author.username)}</div></div>
+                  </div>
+                  ${r.caption ? `<p style="margin:0 0 8px;font-size:13px;">${esc(r.caption)}</p>` : ''}
+                  ${r.music ? `
+                    <button type="button" onclick="playReelWithMusic('${r.id}')" class="music-pill-dark">
+                      <span>🎵 ${esc(r.music.title)}</span>
+                      <span data-music-key="reel_${r.id}" style="color:#fdba74;">${isPlayingYT ? '⏸️ रोकें' : '▶️ सुनें'}</span>
+                    </button>` : ''}
+                </div>
+              </div>`;
+          }).join('')}
+        </div>`;
+    }
+
+    function renderProfile() {
+      const cur = me();
+      const target = getUser(UI.profileUid || cur.uid) || cur;
+      const isMine = target.uid === cur.uid;
+      const myPosts = DB.posts.filter(p => p.authorId === target.uid);
+      const canSee = canViewAuthor(target);
+      const isFol = target.followers.includes(cur.uid);
+      const reqFol = target.followRequests.includes(cur.uid);
+
+      return `
+        <div class="card card-pad">
+          <div class="row" style="gap:16px;margin-bottom:12px;">
+            <div style="position:relative;">
+              <img src="${uPhoto(target)}" class="avatar" style="width:76px;height:76px;border-color:#FF5A36;" />
+              ${isMine ? `<label style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:#FF5A36;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">📷<input type="file" accept="image/*" class="hidden" onchange="changeMyAvatar(this)" /></label>` : ''}
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);text-align:center;">
+              <div><b style="font-size:17px;">${myPosts.length}</b><div style="font-size:11px;color:#64748b;">पोस्ट</div></div>
+              <button onclick="if(${canSee})openPeopleModal('${target.uid}','followers')"><b style="font-size:17px;">${target.followers.length}</b><div style="font-size:11px;color:#64748b;">फॉलोअर्स</div></button>
+              <button onclick="if(${canSee})openPeopleModal('${target.uid}','following')"><b style="font-size:17px;">${target.following.length}</b><div style="font-size:11px;color:#64748b;">फॉलोइंग</div></button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <div style="font-size:17px;font-weight:800;">${esc(target.name)} ${target.isPrivate ? '🔒' : ''}</div>
+            <div style="font-size:12px;color:#64748b;">@${esc(target.username)}</div>
+            <p style="margin:6px 0 0;font-size:13px;">${esc(target.bio)}</p>
+          </div>
+
+          ${isMine ? `
+            <div class="row">
+              <button onclick="openEditProfileModal()" class="btn btn-soft" style="flex:1;">प्रोफाइल बदलें</button>
+              <button onclick="openPasswordModal()" class="btn btn-soft" title="पासवर्ड बदलें">⚙️</button>
+              <button onclick="logout()" class="btn btn-danger" title="लॉगआउट / अकाउंट बदलें">🚪 लॉगआउट</button>
+            </div>` : `
+            <button onclick="toggleFollow('${target.uid}')" class="btn ${isFol || reqFol ? 'btn-soft' : 'btn-primary'}">
+              ${isFol ? '✓ फॉलो कर रहे हैं (अनफॉलो करें)' : reqFol ? 'अनुरोध भेजा गया (रद्द करें)' : (target.isPrivate ? 'फॉलो अनुरोध भेजें' : '+ फॉलो करें')}
+            </button>`}
+        </div>
+
+        ${isMine && cur.followRequests.length ? `
+          <div class="card card-pad">
+            <b style="font-size:13px;">फॉलो अनुरोध (${cur.followRequests.length})</b>
+            ${cur.followRequests.map(fid => {
+              const u = getUser(fid); if (!u) return '';
+              return `<div class="between" style="margin-top:8px;">
+                <span>${esc(u.name)} (@${esc(u.username)})</span>
+                <div class="row"><button onclick="acceptFollowReq('${u.uid}')" class="btn" style="background:#10b981;color:#fff;padding:5px 10px;">स्वीकार</button><button onclick="rejectFollowReq('${u.uid}')" class="btn btn-soft" style="padding:5px 10px;">✕</button></div>
+              </div>`;
+            }).join('')}
+          </div>` : ''}
+
+        <div class="card">
+          ${isMine ? `
+            <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);">
+              <button onclick="UI.profileTab='posts';render();" style="padding:11px;font-weight:700;font-size:13px;color:${UI.profileTab === 'posts' ? '#FF5A36' : '#64748b'};border-bottom:${UI.profileTab === 'posts' ? '2px solid #FF5A36' : 'none'};">पोस्ट</button>
+              <button onclick="UI.profileTab='saved';render();" style="padding:11px;font-weight:700;font-size:13px;color:${UI.profileTab === 'saved' ? '#FF5A36' : '#64748b'};border-bottom:${UI.profileTab === 'saved' ? '2px solid #FF5A36' : 'none'};">सेव की गईं</button>
+            </div>` : ''}
+          ${!canSee ? `<div class="card-pad" style="text-align:center;padding:34px;">🔒<div style="font-weight:700;margin-top:6px;">यह अकाउंट प्राइवेट है</div><div style="font-size:12px;color:#64748b;">पोस्ट देखने के लिए फॉलो करें।</div></div>` : `
+            <div class="grid-3">
+              ${(UI.profileTab === 'saved' && isMine ? cur.savedPosts.map(id => DB.posts.find(p => p.id === id)).filter(Boolean) : myPosts).map(p => {
+                const s = resolveMediaSrc(p.mediaUrl);
+                return `<div class="grid-cell" onclick="openPostDetailModal('${p.id}')" style="cursor:pointer;">${p.mediaType === 'video' ? `<video src="${s}"></video>` : `<img src="${s}" />`}</div>`;
+              }).join('') || '<p style="grid-column:span 3;text-align:center;color:#94a3b8;padding:24px;">अभी कोई पोस्ट नहीं है।</p>'}
+            </div>`}
+        </div>`;
+    }
+
+    // ---------- मुख्य रेंडर ----------
+    function render() {
+      const app = document.getElementById('app');
+      const cur = me();
+
+      if (!cur) {
+        document.body.style.paddingBottom = '0';
+        app.innerHTML = renderAuthScreen();
+        return;
+      }
+
+      document.body.style.paddingBottom = '72px';
+      let bodyHtml = '';
+      if (UI.screen === 'home') bodyHtml = renderHome();
+      else if (UI.screen === 'search') bodyHtml = renderSearch();
+      else if (UI.screen === 'reels') bodyHtml = renderReels();
+      else if (UI.screen === 'profile') bodyHtml = renderProfile();
+
+      app.innerHTML = `
+        ${UI.screen !== 'reels' ? `
+          <header class="header">
+            <div class="header-inner">
+              <button class="logo" onclick="go('home')">
+                <div class="logo-badge">Y</div>
+                <span class="logo-text">YAARI</span>
+              </button>
+              <span style="font-size:12px;font-weight:700;color:#64748b;">नमस्ते, ${esc(cur.name.split(' ')[0])}</span>
+            </div>
+          </header>` : ''}
+
+        <main class="container">${bodyHtml}</main>
+
+        <nav class="bottom-nav">
+          <div class="bottom-nav-inner">
+            <button onclick="go('home')" class="nav-item ${UI.screen === 'home' ? 'active' : ''}">🏠<span>होम</span></button>
+            <button onclick="go('search')" class="nav-item ${UI.screen === 'search' ? 'active' : ''}">🔍<span>खोजें</span></button>
+            <button onclick="openCreateMenu()" class="nav-item" style="color:#E11D48;">➕<span>बनाएँ</span></button>
+            <button onclick="go('reels')" class="nav-item ${UI.screen === 'reels' ? 'active' : ''}">🎬<span>रील्स</span></button>
+            <button onclick="go('profile','${cur.uid}')" class="nav-item ${UI.screen === 'profile' ? 'active' : ''}">👤<span>प्रोफाइल</span></button>
+          </div>
+        </nav>`;
+    }
+
+    // तुरंत चालू करें (0ms लोडिंग) और YouTube API व लोकल वीडियो बैकग्राउंड में तैयार करें
+    render();
+    hydrateAllVideos();
+    initYouTubeAPI();
+  </script>
+</body>
+</html>
